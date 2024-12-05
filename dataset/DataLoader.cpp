@@ -3,7 +3,6 @@
 #include <vector>
 #include <cstdint>
 
-// Function to read MNIST images
 std::vector<std::vector<uint8_t>> readImages(const std::string &filePath, int &imageCount, int &rows, int &cols) {
     std::ifstream file(filePath, std::ios::binary);
     if (!file.is_open()) {
@@ -35,7 +34,6 @@ std::vector<std::vector<uint8_t>> readImages(const std::string &filePath, int &i
     return images;
 }
 
-// Function to read MNIST labels
 std::vector<uint8_t> readLabels(const std::string &filePath, int &labelCount) {
     std::ifstream file(filePath, std::ios::binary);
     if (!file.is_open()) {
@@ -59,36 +57,26 @@ std::vector<uint8_t> readLabels(const std::string &filePath, int &labelCount) {
     return labels;
 }
 
-int main() {
-    try {
-        int imageCount, rows, cols;
-        int labelCount;
 
-        // Paths to the dataset files
-        std::string trainImagesPath = "/mnt/data/train-images.idx3-ubyte";
-        std::string trainLabelsPath = "/mnt/data/train-labels.idx1-ubyte";
-
-        // Read images and labels
+std::vector<int> load_img(const std::string &trainImagesPath,const std::string &trainLabelsPath, int &labelCount,int &imageCount, int &rows, int &cols,int id){
         auto images = readImages(trainImagesPath, imageCount, rows, cols);
         auto labels = readLabels(trainLabelsPath, labelCount);
-
-        // Print some information about the dataset
-        std::cout << "Number of Images: " << imageCount << "\n";
-        std::cout << "Image Dimensions: " << rows << "x" << cols << "\n";
-        std::cout << "Number of Labels: " << labelCount << "\n";
-
-        // Example: Print the first label and its corresponding image
-        std::cout << "First Label: " << static_cast<int>(labels[0]) << "\n";
-        std::cout << "First Image:\n";
+        std::vector<int> output;
         for (int r = 0; r < rows; ++r) {
             for (int c = 0; c < cols; ++c) {
-                std::cout << (images[0][r * cols + c] > 128 ? "#" : ".") << " ";
+                output.push_back(images[id][r * cols + c]);
             }
-            std::cout << "\n";
         }
-    } catch (const std::exception &e) {
-        std::cerr << "Error: " << e.what() << "\n";
-    }
+        return output;
+}
+
+int main() {
+    std::string trainImagesPath = "./MnistData/train-images.idx3-ubyte";
+    std::string trainLabelsPath = "./MnistData/train-labels.idx1-ubyte";
+    int labelCount,imageCount,rows,cols,id;
+    id = 0;
+    std::vector<int> output = load_img(trainImagesPath,trainLabelsPath,labelCount,imageCount,rows,cols,id);
+    for (auto i : output) std::cout << i << " ";
 
     return 0;
 }
